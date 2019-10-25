@@ -11,7 +11,7 @@ module Method = {
     let rec _loop = () =>
       DomExtend.requestAnimationFrame(time => {
         DataAPIEngine.unsafeGetState()
-        |> DirectorAPIEngine.loopBody
+        |> Result.bind(DirectorAPIEngine.loopBody)
         |> Result.tap(state => state |> DataAPIEngine.setState)
         |> Result.getSuccessValue(Error.throwError)
         |> ignore;
@@ -29,9 +29,9 @@ module Method = {
   };
 
   let stop = state => {
-    DomExtend.cancelAnimationFrame(
-      RenderPst.unsafeGetLoopId(PersistentData.getState()),
-    );
+    RenderPst.unsafeGetLoopId(PersistentData.getState())
+    |> Result.tap(DomExtend.cancelAnimationFrame)
+    |> Result.handleError(Error.throwError);
 
     {...state, isStart: false};
   };

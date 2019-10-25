@@ -28,25 +28,42 @@ module Method = {
     let state =
       DataAPIEngine.createState() |> ViewAPIEngine.setCanvasById("webgl");
 
-    let canvas = ViewAPIEngine.unsafeGetCanvas(state);
-
     let state =
       state
       |> DeviceManagerAPIEngine.setClearColor(
            ColorWTEngine.Color4.create(0., 0., 0., 1.),
          )
       |> ShaderAPIEngine.addGLSL(
-           ShaderNameWTEngine.create("shader1"),
+           ShaderWTEngine.ShaderName.create("shader1"),
            (
-             GLSLWTEngine.VS.create(GLSL.vs1),
-             GLSLWTEngine.FS.create(GLSL.fs1),
+             (
+               GLSLWTEngine.VS.create(GLSL.vs1),
+               GLSLWTEngine.FS.create(GLSL.fs1),
+             ),
+             [ShaderWTEngine.FieldName.create("a_position")],
+             [
+               ShaderWTEngine.FieldName.create("u_mMatrix"),
+               ShaderWTEngine.FieldName.create("u_vMatrix"),
+               ShaderWTEngine.FieldName.create("u_pMatrix"),
+               ShaderWTEngine.FieldName.create("u_color0"),
+             ],
            ),
          )
       |> ShaderAPIEngine.addGLSL(
-           ShaderNameWTEngine.create("shader2"),
+           ShaderWTEngine.ShaderName.create("shader2"),
            (
-             GLSLWTEngine.VS.create(GLSL.vs2),
-             GLSLWTEngine.FS.create(GLSL.fs2),
+             (
+               GLSLWTEngine.VS.create(GLSL.vs2),
+               GLSLWTEngine.FS.create(GLSL.fs2),
+             ),
+             [ShaderWTEngine.FieldName.create("a_position")],
+             [
+               ShaderWTEngine.FieldName.create("u_mMatrix"),
+               ShaderWTEngine.FieldName.create("u_vMatrix"),
+               ShaderWTEngine.FieldName.create("u_pMatrix"),
+               ShaderWTEngine.FieldName.create("u_color0"),
+               ShaderWTEngine.FieldName.create("u_color1"),
+             ],
            ),
          )
       |> GameObjectAPIEngine.addGameObjectData(
@@ -57,7 +74,7 @@ module Method = {
            |> CoordinateTransformationMatrixWTEngine.Model.create,
            GameObjectAPIEngine.createTriangleGeometryData(),
            (
-             ShaderNameWTEngine.create("shader1"),
+             ShaderWTEngine.ShaderName.create("shader1"),
              [ColorWTEngine.Color3.create(1., 0., 0.)],
            ),
          )
@@ -69,7 +86,7 @@ module Method = {
            |> CoordinateTransformationMatrixWTEngine.Model.create,
            GameObjectAPIEngine.createTriangleGeometryData(),
            (
-             ShaderNameWTEngine.create("shader2"),
+             ShaderWTEngine.ShaderName.create("shader2"),
              [
                ColorWTEngine.Color3.create(0., 0.8, 0.),
                ColorWTEngine.Color3.create(0., 0.5, 0.),
@@ -84,31 +101,36 @@ module Method = {
            |> CoordinateTransformationMatrixWTEngine.Model.create,
            GameObjectAPIEngine.createTriangleGeometryData(),
            (
-             ShaderNameWTEngine.create("shader1"),
+             ShaderWTEngine.ShaderName.create("shader1"),
              [ColorWTEngine.Color3.create(0., 0., 1.)],
            ),
          );
 
-    let (vMatrix, pMatrixResult) = _createCameraData(canvas);
+    let canvas = ViewAPIEngine.unsafeGetCanvas(state);
 
-    pMatrixResult
-    |> Result.map(pMatrix =>
-         state |> CameraAPIEngine.setCameraData((vMatrix, pMatrix))
-       )
-    |> Result.bind(state =>
-         state
-         |> DirectorAPIEngine.initAll(
-              {
-                "alpha": true,
-                "depth": true,
-                "stencil": false,
-                "antialias": true,
-                "premultipliedAlpha": true,
-                "preserveDrawingBuffer": false,
-              }: Gl.contextConfigJsObj,
+    ViewAPIEngine.unsafeGetCanvas(state)
+    |> Result.bind(canvas => {
+         let (vMatrix, pMatrixResult) = _createCameraData(canvas);
+
+         pMatrixResult
+         |> Result.map(pMatrix =>
+              state |> CameraAPIEngine.setCameraData((vMatrix, pMatrix))
             )
-       )
-    |> Result.map(DataAPIEngine.setState);
+         |> Result.bind(state =>
+              state
+              |> DirectorAPIEngine.initAll(
+                   {
+                     "alpha": true,
+                     "depth": true,
+                     "stencil": false,
+                     "antialias": true,
+                     "premultipliedAlpha": true,
+                     "preserveDrawingBuffer": false,
+                   }: Gl.contextConfigJsObj,
+                 )
+            )
+         |> Result.map(DataAPIEngine.setState);
+       });
   };
 };
 

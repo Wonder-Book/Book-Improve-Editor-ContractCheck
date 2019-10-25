@@ -1,3 +1,3 @@
 open TinyWonderEngine;
 
-include ShaderName;
+include ShaderWT;

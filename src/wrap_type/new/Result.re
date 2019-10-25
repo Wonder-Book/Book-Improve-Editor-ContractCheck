@@ -1,4 +1,7 @@
 include TinyWonderEngine.Result;
 
-let map = (oneTrackFunc, twoTrackInput) =>
-  either(result => result |> oneTrackFunc |> succeed, fail, twoTrackInput);
+let handleError = (handleFailFunc: 'f => unit, result: t('s, 'f)): unit =>
+  switch (result) {
+  | Success(s) => ()
+  | Fail(f) => handleFailFunc(f)
+  };
