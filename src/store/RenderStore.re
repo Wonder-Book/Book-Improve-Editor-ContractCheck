@@ -33,6 +33,14 @@ module Method = {
     |> Result.tap(DomExtend.cancelAnimationFrame)
     |> Result.handleError(Error.throwError);
 
+    DataAPIEngine.unsafeGetState()
+    |> Result.bind(state =>
+         state
+         |> DeviceManagerAPIEngine.unsafeGetGl
+         |> Result.tap(DeviceManagerAPIEngine.clear)
+       )
+    |> Result.handleError(Error.throwError);
+
     {...state, isStart: false};
   };
 };
