@@ -1,0 +1,21 @@
+{
+    "name": "improve-contractcheck-tiny-wonder-editor",
+    "version": "0.0.1",
+    "authors": "yyc",
+    "license": "mit",
+    "scripts": {
+        "bsb:watch": "bsb -clean-world -make-world -w",
+        "bsb:build": "bsb -clean-world -make-world",
+        "webpack:dev": "NODE_ENV=development webpack --config webpack.config.js"
+    },
+    "devDependencies": {
+        "bs-platform": "^5.2.0",
+        "webpack": "^4.17.1",
+        "webpack-cli": "^3.1.0"
+    },
+    "dependencies": {
+        "reason-react": "^0.7.0",
+        "reductive": "^2.0.0",
+        "improve-contractcheck-tiny-wonder-engine": "^0.0.1"
+    }
+}
