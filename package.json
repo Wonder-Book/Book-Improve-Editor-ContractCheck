@@ -16,6 +16,6 @@
     "dependencies": {
         "reason-react": "^0.7.0",
         "reductive": "^2.0.0",
-        "improve-contractcheck-tiny-wonder-engine": "^0.0.2"
+        "improve-contractcheck-tiny-wonder-engine": "^0.0.3"
     }
 }
